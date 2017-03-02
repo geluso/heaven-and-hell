@@ -1,55 +1,14 @@
-var WIDTH = 1010;
-var HEIGHT = 59;
-var frame_width = 144;
-var frame_height = 59;
 var screen;
 var loaded = [];
-var frames_per_reel = 100;
-var total_frames = 472;
-var pixels_per_frame = 2;
 
-var frame_rate = 1;
-
-var cursor = 0;
-var reverse = false;
+var frame_rate = 30;
 var single_frame = false;
-
-var on_screen = false;
-var ticker;
-
-function draw_frame_at_cursor() {
-  var x = cursor;
-  var frame_num = Math.floor((x + frame_width / 2) / pixels_per_frame);
-  var reel_num = Math.floor(frame_num / frames_per_reel);
-  var frame = frame_num % frames_per_reel;
-  if (frame_num < total_frames && reel_num < loaded.length) {
-    paint_frame(loaded[reel_num], screen, frame, x);
-  }
-}
-
-function update_cursor() {
-  if (reverse) {
-    cursor--;
-  } else {
-    cursor++;
-  }
-}
-
-function wrap_cursor() {
-  var max_cursor_pos = total_frames * pixels_per_frame;
-  if (cursor > (max_cursor_pos)) {
-    cursor = 0;
-  } else if (cursor < 0) {
-    cursor = max_cursor_pos;
-  }
-}
-
-function stop_sweep() {
-  clearInterval(ticker);
-}
 
 function paint_frame(film, screen, frame, x) {
   var offset = frame_height * frame;
+  if (offset < 0) {
+    return
+  }
   var frame = film.getImageData(0, offset, frame_width, frame_height);
   if (single_frame) {
     screen.fillRect(0, 0, WIDTH, HEIGHT);
@@ -57,20 +16,11 @@ function paint_frame(film, screen, frame, x) {
   screen.putImageData(frame, x, 0);
 }
 
-function update_cursor_pos(e) {
-  cursor = e.offsetX - frame_width / 2;
-  if (cursor < 0) {
-    cursor = 0 - frame_width / 2;
-  }
-}
-
 window.onload = function () {
-  // Reverse
   var reverse_checkbox = $("#reverse");
-  reverse = reverse_checkbox[0].checked;
-
   reverse_checkbox.click(function(e) {
     reverse = reverse_checkbox[0].checked;
+    drawer.reverse = reverse;
   });
 
   // single_frame
@@ -116,28 +66,26 @@ window.onload = function () {
   screen = screen.getContext("2d");
   screen.fillRect(0, 0, WIDTH, HEIGHT);
 
+  var drawer = new FrameDrawer();
   draw_frame_loop = new Loop(function() {
-    draw_frame_at_cursor();
-    update_cursor();
-    wrap_cursor();
+    drawer.draw();
   }, frame_rate);
-
 
   // Mouse events.
   $("#screen").mouseenter(function(e) {
     draw_frame_loop.stop();
-    update_cursor_pos(e);
+    drawer.cursor_from_mouse(e);
   });
 
   $("#screen").mouseleave(function(e) {
-    update_cursor_pos(e);
+    drawer.cursor_from_mouse(e);
     draw_frame_loop.start();
   });
 
   $("#screen").mousemove(function(e) {
     if (!draw_frame_loop.is_running()) {
-      update_cursor_pos(e);
-      draw_frame_at_cursor(screen);
+      drawer.cursor_from_mouse(e);
+      drawer.draw_frame_at_cursor(screen);
     }
   });
 
