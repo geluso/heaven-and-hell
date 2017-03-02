@@ -13,6 +13,8 @@ class FrameDrawer {
     this.frameRate = frameRate || 30;
     this.pixelsPerFrame = 2;
     this.reverse = false;
+    
+    this.rippleShift = 0;
   }
   
   draw() {
@@ -27,11 +29,12 @@ class FrameDrawer {
     var reel_num = Math.floor(frame_num / frames_per_reel);
     var frame = frame_num % frames_per_reel;
     if (frame_num < total_frames && reel_num < loaded.length) {
-      paint_frame(loaded[reel_num], screen, frame, x);
+      paint_frame(loaded[reel_num], screen, frame, x, this.rippleShift);
     }
   }
 
   update_cursor() {
+    this.rippleShift = (this.rippleShift + 1) % frame_width;
     if (this.reverse) {
       this.cursor--;
     } else {

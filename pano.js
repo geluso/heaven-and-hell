@@ -1,17 +1,27 @@
 var screen;
 var loaded = [];
 
-var frame_rate = 30;
+var frame_rate = 10;
 var single_frame = false;
 
-function paint_frame(film, screen, frame, x) {
+function paint_frame(film, screen, frame, x, rippleShift) {
   var offset = frame_height * frame;
   if (offset < 0) {
     return
   }
-  var frame = film.getImageData(0, offset, frame_width, frame_height);
+  //var width = frame_width - rippleShift;
+  var width = frame_width;
+  var frame = film.getImageData(0, offset, width, frame_height);
   if (single_frame) {
     screen.fillRect(0, 0, WIDTH, HEIGHT);
+  }
+  
+  var data = frame.data;
+  var width = frame_width * 4;
+  for (var i = 3; i < data.length; i += 4) {
+    var ratio = (i % width) / width;
+    var distance = Math.abs(ratio - .5);
+    data[i] = 255 - 255 * distance;
   }
   screen.putImageData(frame, x, 0);
 }
@@ -20,7 +30,7 @@ window.onload = function () {
   var reverse_checkbox = $("#reverse");
   reverse_checkbox.click(function(e) {
     reverse = reverse_checkbox[0].checked;
-    drawer.reverse = reverse;
+    mouse_drawer.reverse = reverse;
   });
 
   // single_frame
@@ -66,26 +76,54 @@ window.onload = function () {
   screen = screen.getContext("2d");
   screen.fillRect(0, 0, WIDTH, HEIGHT);
 
-  var drawer = new FrameDrawer();
+  var drawers = [];
+  var drawer = new FrameDrawer()
+  drawers.push(drawer);
+  
+  // var offset = 0;
+  // var stepSize = frame_width * 2
+  // while (offset < WIDTH) {
+  //   var drawer = new FrameDrawer(offset)
+  //   drawers.push(drawer);
+  //   if (drawers.length % 2 == 0) {
+  //     //drawer.reverse = true;
+  //   }
+  //   offset += stepSize;
+  // }
+  //
+  // var pump = setInterval(function() {
+  //   var left = new FrameDrawer(WIDTH / 2 - frame_width);
+  //   var right = new FrameDrawer(WIDTH / 2);
+  //   left.reverse = true;
+  //   drawers.push(left);
+  //   drawers.push(right);
+  //   if (drawers.length > 250) {
+  //     clearInterval(pump);
+  //   }
+  // }, 30);
+  
+  var mouse_drawer = new FrameDrawer();
   draw_frame_loop = new Loop(function() {
-    drawer.draw();
+    drawers.forEach(function(dd) {
+      dd.draw();
+    });
   }, frame_rate);
 
   // Mouse events.
   $("#screen").mouseenter(function(e) {
     draw_frame_loop.stop();
-    drawer.cursor_from_mouse(e);
+    mouse_drawer.cursor_from_mouse(e);
   });
 
   $("#screen").mouseleave(function(e) {
-    drawer.cursor_from_mouse(e);
+    mouse_drawer.cursor_from_mouse(e);
     draw_frame_loop.start();
   });
 
   $("#screen").mousemove(function(e) {
     if (!draw_frame_loop.is_running()) {
-      drawer.cursor_from_mouse(e);
-      drawer.draw_frame_at_cursor(screen);
+      mouse_drawer.cursor_from_mouse(e);
+      mouse_drawer.draw_frame_at_cursor(screen);
     }
   });
 

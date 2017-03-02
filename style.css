@@ -13,7 +13,12 @@ body {
   margin-right: auto;
 }
 
+#mousearea {
+  background-color: black;
+}
+
 canvas {
+  background-color: black;
   border: solid black 1px;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: optimizeSpeed;
