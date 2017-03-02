@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script src="jquery.js" type="text/javascript"></script>
+    <script src="loop.js" type="text/javascript"></script>
+    <script src="pano.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <h1>heaven and hell attendees</h1>
+    <div id="mousearea">
+      <canvas id="screen"></canvas>
+    </div>
+    <label><input id="reverse" type="checkbox" /> reverse</label>
+    <label><input id="single_frame" type="checkbox" /> single_frame</label>
+    <label><input id="show_reels" type="checkbox" /> show_reels</label>
+
+    <div id="reels" class="none">
+      <canvas id="reel0"></canvas>
+      <canvas id="reel5"></canvas>
+      <canvas id="reel10"></canvas>
+      <canvas id="reel15"></canvas>
+      <canvas id="reel20"></canvas>
+    </div>
+    <div id="film" style="display: none;">
+      <img id="zero" src="0.jpg" />
+      <img id="five" src="5.jpg" />
+      <img id="ten" src="10.jpg" />
+      <img id="fifteen" src="15.jpg" />
+      <img id="twenty" src="20.jpg" />
+    </div>
+  </body>
+</html>

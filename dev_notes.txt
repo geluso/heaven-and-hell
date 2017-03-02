@@ -1,0 +1,131 @@
+Loop
+====
+Is there a good way to start and stop events?
+wrap things in an interface that tracks its own interval
+
+    function Loop(loop, delay) {
+      var default_delay = 100;
+
+      this.interval_id = null;
+      this.loop = loop;
+      this.delay = delay || default_delay;
+    }
+
+    Loop.prototype.start = function() {
+      this.interval_id = setInterval(this.func, this.delay);
+    }
+
+    Loop.prototype.stop = function() {
+      clearInterval(this.interval_id);
+      this.interval_id = null;
+    }
+
+    Loop.prototype.is_running() {
+      return this.interval_id != null;
+    }
+
+Huh. Surprisingly simple enough structure. Tested with a simple
+statement that prints one statement to the console.
+
+    loop = new Loop(function() {
+      console.log("looping...");
+    });
+    loop.start();
+
+And it works! Very good.
+
+Now I wonder if I can create a loop with a variable bound to a
+larger scope. I fear that the loop will not behave nicely with
+global variables.
+
+    var x = 0; 
+    loop = new Loop(function() {
+      console.log(x);
+      x++;
+    });
+    loop.start();
+
+Annd, it works fine! What a wonderfull day.
+
+Cursor
+======
+The filmstrip contains a sequence of frames and a sequence of
+frame locations. The frame is the image that will be drawn.
+The frame location is the location where the frame will be drawn.
+Originally, the movie contained a the same sequence of frames
+and drew them all on the same location, the movie screen. By
+changing the location where each frame is drawn the frames are
+able to persist and we may see bits of many frames at once.
+
+Each frame is drawn slightly to the right of the frame before it
+as the movie is played forward. As one frame is shown at a time,
+as we are used to seeing movies, this effect is unremarkable. The
+movie just looks as if it is sliding from left to right.
+
+The effect becomes much more interesting when we preserve every
+frame painted on the screen.
+
+
+
+The filmstrip must keep track of the state
+of each of these.
+
+  1. the current frame.
+  2. the location where the frame will be drawn.
+
+Cursors keep track of each of these. Cursors progress linearly.
+
+Checkbox
+========
+Seeking a good way to bind checkboxes with named variables with
+the action of checking and unchecking.
+
+    function Checkbox(name, check, uncheck) {
+      this.name = name;
+      this.check = check;
+      this.uncheck = uncheck;
+      $("#" + name).click(this.check);
+    }
+
+    Checkbox.prototype.is_checked() {
+
+    }
+
+Interesting Things To Note
+==========================
+There is a difference between playing the movie fowards and
+backwards. It is the difference between the left-most and
+right-most pixel column persisting. It would be interesting
+to make the mid-most column persist. It is interesting to
+wonder which would be the best possible column to persist.
+
+I believe the most attrative look would be a ripple. Many
+cursors that play across the page. It may be possible to sync
+them such that everything is continuous. I'm not sure. This
+boggles me.
+
+It is fun to note the entrance of Max's Dad and the exit of
+Luke Wilson. Luke Wilson creates a strange looking blotch
+when he makes his hasty exit when played forward, but the
+blotch does not appear when played backward. I assume the
+director paid more attention to the right-most columns, as
+actors entered the picture, then to the left-most, as actors
+are leaving the picture.
+
+This reminds me of calculus. I'm not sure how tenuous the
+connection.
+
+look up the word "tenuous"
+notice that it ends in .us
+investigate domain "10uo.us"
+find the 10uous app
+notice that it is unused and abandoned
+though the author took time to:
+  create a twitter
+  create a blog subdomain
+  add ads
+  make it look nice
+  add a facebook login
+
+there is only one tweet.
+the tweet is from 2009.
