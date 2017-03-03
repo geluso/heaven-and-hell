@@ -22,6 +22,9 @@ function paint_frame(film, screen, frame, x, rippleShift) {
     var ratio = (i % width) / width;
     var distance = Math.abs(ratio - .5);
     data[i] = 255 - 255 * distance;
+    if (data[i] > 240) {
+      data[i] = 255
+    }
   }
   screen.putImageData(frame, x, 0);
 }
@@ -86,21 +89,21 @@ window.onload = function () {
   //   var drawer = new FrameDrawer(offset)
   //   drawers.push(drawer);
   //   if (drawers.length % 2 == 0) {
-  //     //drawer.reverse = true;
+  //     drawer.reverse = true;
   //   }
   //   offset += stepSize;
   // }
-  //
-  // var pump = setInterval(function() {
-  //   var left = new FrameDrawer(WIDTH / 2 - frame_width);
-  //   var right = new FrameDrawer(WIDTH / 2);
-  //   left.reverse = true;
-  //   drawers.push(left);
-  //   drawers.push(right);
-  //   if (drawers.length > 250) {
-  //     clearInterval(pump);
-  //   }
-  // }, 30);
+  
+  var pump = setInterval(function() {
+    var left = new FrameDrawer(WIDTH / 2 - frame_width);
+    var right = new FrameDrawer(WIDTH / 2);
+    left.reverse = true;
+    drawers.push(left);
+    drawers.push(right);
+    if (drawers.length > 250) {
+      clearInterval(pump);
+    }
+  }, 30);
   
   var mouse_drawer = new FrameDrawer();
   draw_frame_loop = new Loop(function() {
